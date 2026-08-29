@@ -45,7 +45,7 @@ function ShowtimeSelection() {
         <div className="w-full bg-(--color-background) min-h-screen text-white">
             <main className="p-6 md:p-8 max-w-6xl mx-auto">
 
-                <BackButton label="Volver a cartelera" />
+                <BackButton label="Volver a cartelera" to="/" />
 
             <section className="flex flex-col items-center justify-center lg:flex-row gap-12 lg:gap-20 pb-24">
 
@@ -78,38 +78,39 @@ function ShowtimeSelection() {
             </section>
 
             {selectedDay && selectedShowtime && (
-                <div className="
-                    fixed
-                    bottom-0
-                    left-0
-                    z-50
-                    w-full
-                    border-t
-                    border-gray-700
-                    bg-gray-900
-                    p-4
-                    shadow-[0_-5px_20px_rgba(0,0,0,0.3)]
-                ">
-                    <div className="mx-auto flex max-w-6xl justify-end">
+                <div className="fixed bottom-0 left-0 z-50 w-full border-t border-gray-800 bg-(--color-card)/95 backdrop-blur-md px-6 py-4 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-full duration-300">
+                    <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm">
+                            <span className="text-gray-400 font-medium">Función seleccionada:</span>
+                            <div className="flex items-center gap-2">
+                                <span className="bg-amber-500/20 text-amber-400 font-extrabold px-2.5 py-1 rounded-md border border-amber-500/30">
+                                    {selectedDay.day} {selectedDay.date || ""}
+                                </span>
+                                <span className="bg-red-500/20 text-red-400 font-extrabold px-2.5 py-1 rounded-md border border-red-500/30">
+                                    {selectedShowtime.time} hs
+                                </span>
+                            </div>
+                        </div>
 
-                        <Link to={`/tickets/${movieDetails.id}`}
-                        state={{ selectedDay, selectedShowtime, tickets: savedTickets, selectedSeats: savedSeats }}
+                        <Link
+                            to={`/tickets/${movieDetails.id}`}
+                            state={{ selectedDay, selectedShowtime, tickets: savedTickets, selectedSeats: savedSeats }}
+                            className="group"
                         >
-                            <button className="
-                                rounded-lg
-                                bg-red-600
-                                px-6
-                                py-3
-                                font-semibold
-                                text-white
-                                hover:bg-red-700
-                                transition-colors
-                                cursor-pointer
-                            ">
-                                Continuar
+                            <button className="rounded-xl bg-red-600 px-6 sm:px-8 py-3 font-extrabold text-white hover:bg-red-500 shadow-lg shadow-red-900/40 hover:shadow-red-600/50 hover:scale-105 active:scale-95 transition-all transform flex items-center gap-2 cursor-pointer text-sm sm:text-base">
+                                <span>Continuar</span>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    height="20px"
+                                    viewBox="0 -960 960 960"
+                                    width="20px"
+                                    fill="currentColor"
+                                    className="transition-transform group-hover:translate-x-1"
+                                >
+                                    <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
+                                </svg>
                             </button>
                         </Link>
-
                     </div>
                 </div>
             )}

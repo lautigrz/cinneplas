@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router";
 
-function BackButton({ label = "Volver", onClick }) {
+function BackButton({ label = "Volver", onClick, to }) {
     const navigate = useNavigate();
 
     const handleClick = () => {
         if (onClick) {
             onClick();
+        } else if (to) {
+            navigate(to);
         } else {
             navigate(-1);
         }

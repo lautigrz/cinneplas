@@ -1,15 +1,13 @@
 import useDragScroll from "../../hooks/useDragScroll";
 
 function ShowdaySelector({ idMovie, selectedDay, setSelectedDay }) {
-    console.log(idMovie)
-
     const {
         carouselRef,
         handleMouseDown,
         handleMouseMove,
         stopDragging,
+        handleWheel
     } = useDragScroll();
-
 
     const days = [
         { id: "today", day: "HOY" },
@@ -20,26 +18,30 @@ function ShowdaySelector({ idMovie, selectedDay, setSelectedDay }) {
     ];
 
     return (
-        <>
-            <h2 className="text-2xl font-bold mb-4">
+        <div className="w-full">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3">
                 HORARIOS
             </h2>
 
-
-            <div className="w-full min-w-0 overflow-x-auto" ref={carouselRef}
+            {/* Contenedor con Scroll por Rueda/Arrastre en Desktop y Touch Nativo en Móvil */}
+            <div
+                ref={carouselRef}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={stopDragging}
-                onMouseLeave={stopDragging}>
-                <div className="flex w-max gap-3 pb-2">
-
+                onMouseLeave={stopDragging}
+                onWheel={handleWheel}
+                className="w-full overflow-x-auto scrollbar-hide py-2 touch-pan-x cursor-grab active:cursor-grabbing select-none"
+            >
+                <div className="flex w-max gap-3 pr-4">
                     {days.map((day) => (
                         <button
                             key={day.id}
-                            className={`shrink-0 flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${selectedDay?.id === day.id
+                            className={`shrink-0 flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm transition-all cursor-pointer touch-manipulation ${
+                                selectedDay?.id === day.id
                                     ? "bg-red-600 text-white font-extrabold shadow-lg scale-105"
                                     : "bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 hover:text-white"
-                                }`}
+                            }`}
                             onClick={() => setSelectedDay(day)}
                         >
                             {day.date ? (
@@ -54,9 +56,8 @@ function ShowdaySelector({ idMovie, selectedDay, setSelectedDay }) {
                     ))}
                 </div>
             </div>
-        </>
-    )
-
+        </div>
+    );
 }
 
-export default ShowdaySelector
+export default ShowdaySelector;
