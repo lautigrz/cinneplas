@@ -1,7 +1,7 @@
 import AvailabilityIndicator from "../../components/AvailabilityIndicator/AvailabilityIndicator";
 import useDragScroll from "../../hooks/useDragScroll";
-import { useState } from "react";
-function ShowtimeSelection() {
+
+function ShowtimeSelection({ selectedShowtime, setSelectedShowtime }) {
     const {
         carouselRef,
         handleMouseDown,
@@ -9,7 +9,6 @@ function ShowtimeSelection() {
         stopDragging,
     } = useDragScroll();
 
-    const [selectedShowtime, setSelectedShowtime] = useState(1);
 
     const showtimes = [
         { id: 1, time: "10:00", availability: "high" },
@@ -20,22 +19,23 @@ function ShowtimeSelection() {
         { id: 6, time: "22:00", availability: "full" },
     ];
     return (
-        <div className="flex gap-2 mt-5 w-full min-w-0 overflow-x-auto" ref={carouselRef}
+        <div className="flex gap-2 mt-5 w-full min-w-0 overflow-hidden" ref={carouselRef}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={stopDragging}
             onMouseLeave={stopDragging}>
 
             {showtimes.map((showtime) => (
-                <button 
-                key={showtime.id}
-                className={`flex items-center gap-1 px-5 py-2 bg-gray-600 hover:bg-red-700 rounded-lg text-sm
-                ${selectedShowtime === showtime.id ? "bg-red-700" : ""}
-                `}
-                onClick={() => setSelectedShowtime(showtime.id)}
+                <button
+                    key={showtime.id}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${selectedShowtime?.id === showtime.id
+                        ? "bg-red-600 text-white font-extrabold shadow-lg scale-105"
+                        : "bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 hover:text-white"
+                        }`}
+                    onClick={() => setSelectedShowtime(showtime)}
                 >
                     <AvailabilityIndicator level={showtime.availability} />
-                    <span>{showtime.time}</span>
+                    <span className="font-extrabold tracking-wider">{showtime.time}</span>
                 </button>
             ))}
 

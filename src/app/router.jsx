@@ -2,7 +2,9 @@ import { createBrowserRouter } from "react-router";
 import Layout from "../components/layout/Layout";
 import Home from "../pages/Home/Home";
 import ShowtimeSelection from "../pages/ShowtimeSelection/ShowtimeSelection";
+import TicketSelection from "../pages/TicketSelection/TicketSelection";
 import SeatSelection from "../pages/SeatSelection/Seatselection";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,7 +19,11 @@ const router = createBrowserRouter([
         element: <ShowtimeSelection />,
       },
       {
-        path: "seat-selection/:id",
+        path: "tickets/:id",
+        element: <TicketSelection />,
+      },
+      {
+        path: "booking/:id",
         element: <SeatSelection />,
       }
     ],

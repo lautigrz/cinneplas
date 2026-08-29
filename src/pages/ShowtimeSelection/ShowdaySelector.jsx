@@ -1,6 +1,6 @@
 import useDragScroll from "../../hooks/useDragScroll";
-import { useState } from "react";
-function ShowdaySelector({ idMovie }) {
+
+function ShowdaySelector({ idMovie, selectedDay, setSelectedDay }) {
     console.log(idMovie)
 
     const {
@@ -10,7 +10,6 @@ function ShowdaySelector({ idMovie }) {
         stopDragging,
     } = useDragScroll();
 
-    const [selectedDay, setSelectedDay] = useState("today");
 
     const days = [
         { id: "today", day: "HOY" },
@@ -37,19 +36,19 @@ function ShowdaySelector({ idMovie }) {
                     {days.map((day) => (
                         <button
                             key={day.id}
-                            className={`shrink-0 flex items-center gap-1 px-5 py-2 rounded-lg text-sm ${selectedDay === day.id
-                                    ? "bg-red-700"
-                                    : "bg-gray-600 hover:bg-red-700"
+                            className={`shrink-0 flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${selectedDay?.id === day.id
+                                    ? "bg-red-600 text-white font-extrabold shadow-lg scale-105"
+                                    : "bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 hover:text-white"
                                 }`}
-                            onClick={() => setSelectedDay(day.id)}
+                            onClick={() => setSelectedDay(day)}
                         >
                             {day.date ? (
                                 <>
-                                    <span>{day.day}</span>
-                                    <span>{day.date}</span>
+                                    <span className="font-extrabold">{day.day}</span>
+                                    <span className="text-xs opacity-90">{day.date}</span>
                                 </>
                             ) : (
-                                <span>{day.day}</span>
+                                <span className="font-extrabold tracking-wider">{day.day}</span>
                             )}
                         </button>
                     ))}

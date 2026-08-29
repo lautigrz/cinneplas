@@ -1,11 +1,38 @@
 import MovieCard from '../../components/MovieCard/MovieCard';
 import HeroBanner from '../../components/HeroBanner/HeroBanner';
-import movies from '../../data/Movies';
+import { fetchMovies } from "../../services/tmdb.js";
+import { useEffect, useState } from 'react';
+
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 function Home() {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadMovies() {
+      try {
+        const data = await fetchMovies();
+
+        setMovies(data);
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadMovies();
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner message="Cargando películas..." />;
+  }
+
   return (
     <>
-      <HeroBanner />
+      <HeroBanner movies={movies} />
       <section className="bg-(--color-background) p-8 text-white">
         <div className="mx-auto max-w-6xl">
           <h2 className="mb-6 text-2xl font-bold">
@@ -16,7 +43,7 @@ function Home() {
             {movies.map((movie) => (
               <MovieCard key={movie.id} movie={movie} />
             ))}
-          
+
           </div>
         </div>
       </section>

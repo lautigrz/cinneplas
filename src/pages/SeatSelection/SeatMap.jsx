@@ -1,18 +1,19 @@
 import { useRef, useState } from "react";
 
 function SeatMap({ seats, selectedSeats, onSelectSeat }) {
-
+    const viewportRef = useRef(null);
     const mapRef = useRef(null);
 
-    const [zoom, setZoom] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
-
     const [dragging, setDragging] = useState(false);
 
     const start = useRef({ x: 0, y: 0 });
     const initialPosition = useRef({ x: 0, y: 0 });
 
     const handleMouseDown = (e) => {
+        // Solo permitir drag en responsive
+        if (window.innerWidth >= 768) return;
+
         setDragging(true);
 
         start.current = {
@@ -24,15 +25,51 @@ function SeatMap({ seats, selectedSeats, onSelectSeat }) {
     };
 
     const handleMouseMove = (e) => {
-
         if (!dragging) return;
+
+        const viewport = viewportRef.current;
+        const map = mapRef.current;
+
+        if (!viewport || !map) return;
 
         const dx = e.clientX - start.current.x;
         const dy = e.clientY - start.current.y;
 
+        const viewportWidth = viewport.clientWidth;
+        const viewportHeight = viewport.clientHeight;
+
+        const mapWidth = map.offsetWidth;
+        const mapHeight = map.offsetHeight;
+
+        const maxX = Math.max(
+            0,
+            (mapWidth - viewportWidth) / 2
+        );
+
+        const maxY = Math.max(
+            0,
+            (mapHeight - viewportHeight) / 2
+        );
+
+        const newX = Math.max(
+            -maxX,
+            Math.min(
+                initialPosition.current.x + dx,
+                maxX
+            )
+        );
+
+        const newY = Math.max(
+            -maxY,
+            Math.min(
+                initialPosition.current.y + dy,
+                maxY
+            )
+        );
+
         setPosition({
-            x: initialPosition.current.x + dx,
-            y: initialPosition.current.y + dy
+            x: newX,
+            y: newY
         });
     };
 
@@ -40,45 +77,42 @@ function SeatMap({ seats, selectedSeats, onSelectSeat }) {
         setDragging(false);
     };
 
-    const zoomIn = () => {
-        setZoom((z) => Math.min(z + 0.2, 2.5));
-    };
 
-    const zoomOut = () => {
-        setZoom((z) => Math.max(z - 0.2, 0.5));
-    };
+    // Bounding box de los asientos
+
+    const minX = Math.min(...seats.map(s => s.positionX));
+    const maxX = Math.max(...seats.map(s => s.positionX));
+
+    const minY = Math.min(...seats.map(s => s.positionY));
+
+    const columns = maxX - minX + 1;
+
 
     return (
-        <div className="relative w-full h-175 overflow-hidden bg-gray-950 rounded-xl">
-
-            {/* CONTROLES */}
-            <div className="absolute z-20 top-4 right-4 flex flex-col gap-2">
-
-                <button
-                    onClick={zoomIn}
-                    className="w-10 h-10 bg-gray-800 text-white rounded-lg"
-                >
-                    +
-                </button>
-
-                <button
-                    onClick={zoomOut}
-                    className="w-10 h-10 bg-gray-800 text-white rounded-lg"
-                >
-                    −
-                </button>
-
-            </div>
-
-
-            {/* VIEWPORT */}
+        <div
+            ref={viewportRef}
+            className="
+                w-full
+                h-full
+                min-h-fit
+                lg:min-h-[70vh]
+                overflow-hidden
+                rounded-xl
+            "
+        >
 
             <div
-                ref={mapRef}
                 className={`
-                    w-full h-full
-                    flex items-center justify-center
-                    ${dragging ? "cursor-grabbing" : "cursor-grab"}
+                    w-full
+                    h-full
+                    flex
+                    flex-col
+                    overflow-hidden
+
+                    ${dragging
+                        ? "cursor-grabbing"
+                        : "cursor-grab md:cursor-default"
+                    }
                 `}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
@@ -86,36 +120,42 @@ function SeatMap({ seats, selectedSeats, onSelectSeat }) {
                 onMouseLeave={handleMouseUp}
             >
 
-                {/* MAPA */}
-
                 <div
+                    ref={mapRef}
+                    className="
+                        flex
+                        flex-col
+                        items-center
+                        w-full
+                        h-full
+                    "
                     style={{
-                        transform: `
-                            translate(${position.x}px, ${position.y}px)
-                            scale(${zoom})
-                        `,
+                        transform: `translate(${position.x}px, ${position.y}px)`
                     }}
-                    className="flex flex-col items-center gap-10"
                 >
 
                     {/* PANTALLA */}
 
-                    <div className="w-175">
+                    <div className="w-[80%] max-w-125 pt-8 shrink-0">
 
-                        <div className="
-                            h-3
-                            rounded-full
-                            bg-white
-                            shadow-[0_0_30px_rgba(255,255,255,0.8)]
-                        "/>
+                        <div
+                            className="
+                                h-2
+                                rounded-full
+                                bg-white
+                                shadow-[0_0_20px_rgba(255,255,255,0.8)]
+                            "
+                        />
 
-                        <p className="
-                            text-center
-                            text-gray-400
-                            text-sm
-                            mt-3
-                            tracking-[0.5em]
-                        ">
+                        <p
+                            className="
+                                text-center
+                                text-gray-400
+                                text-xs
+                                mt-2
+                                tracking-[0.4em]
+                            "
+                        >
                             PANTALLA
                         </p>
 
@@ -125,52 +165,74 @@ function SeatMap({ seats, selectedSeats, onSelectSeat }) {
                     {/* ASIENTOS */}
 
                     <div
-                        className="grid gap-3"
-                        style={{
-                            gridTemplateColumns:
-                                "repeat(16, 45px)"
-                        }}
+                        className="
+                            flex-1
+                            w-full
+                            flex
+                            items-center
+                            justify-center
+                            p-6
+                        "
                     >
 
-                        {seats.map((seat) => (
+                        <div
+                            className="grid gap-2"
+                            style={{
+                                gridTemplateColumns:
+                                    `repeat(${columns}, clamp(16px, 2.6vw, 28px))`
+                            }}
+                        >
 
-                            <button
-                                key={seat.id}
+                            {seats.map((seat) => (
 
-                                style={{
-                                    gridColumn: seat.positionX,
-                                    gridRow: seat.positionY
-                                }}
+                                <button
+                                    key={seat.id}
 
-                                disabled={
-                                    seat.status === "occupied"
-                                }
+                                    style={{
+                                        gridColumn:
+                                            seat.positionX - minX + 1,
 
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onSelectSeat(seat.id);
-                                }}
+                                        gridRow:
+                                            seat.positionY - minY + 1
+                                    }}
 
-                                className={`
-                                    w-11 h-9
-                                    rounded-t-xl rounded-b-md
-                                    text-[10px]
-                                    font-semibold
-                                    transition
-
-                                    ${
+                                    disabled={
                                         seat.status === "occupied"
-                                            ? "bg-gray-600"
-                                            : selectedSeats.includes(seat.id)
-                                                ? "bg-red-500 scale-110"
-                                                : "bg-green-500 hover:bg-green-400"
                                     }
-                                `}
-                            >
-                                {seat.id}
-                            </button>
 
-                        ))}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onSelectSeat(seat.id);
+                                    }}
+
+                                    className={`
+                                        w-[clamp(16px,2.6vw,28px)]
+                                        h-[clamp(14px,2.2vw,24px)]
+
+                                        rounded-t-lg
+                                        rounded-b-sm
+
+                                        text-[clamp(6px,0.7vw,8px)]
+                                        font-semibold
+                                        transition
+
+                                        ${
+                                            seat.status === "occupied"
+                                                ? "bg-gray-600"
+
+                                                : selectedSeats.includes(seat.id)
+                                                    ? "bg-green-400 scale-110"
+
+                                                    : "bg-white hover:bg-green-400"
+                                        }
+                                    `}
+                                >
+                                    {seat.id}
+                                </button>
+
+                            ))}
+
+                        </div>
 
                     </div>
 
