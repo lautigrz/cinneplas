@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import ScrollToTop from "../ui/ScrollToTop";
+import LoginModal from "../auth/LoginModal";
 
 function Layout() {
   return (
@@ -14,6 +15,7 @@ function Layout() {
       </main>
 
       <Footer />
+      <LoginModal />
     </div>
   );
 }

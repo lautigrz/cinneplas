@@ -2,10 +2,13 @@ import MovieCard from '../../components/MovieCard/MovieCard';
 import HeroBanner from '../../components/HeroBanner/HeroBanner';
 import { fetchMovies } from "../../services/tmdb.js";
 import { useEffect, useState } from 'react';
-
+import { Navigate } from 'react-router';
+import { useAuth } from '../../context/useAuth';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
+
 function Home() {
+  const { user, isLoading: authLoading } = useAuth();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +28,17 @@ function Home() {
 
     loadMovies();
   }, []);
+
+  if (authLoading) {
+    console.log("authLoading");
+    return <LoadingSpinner message="Cargando..." />;
+  }
+
+  if (user?.role === "ADMIN") {
+    console.log(user);
+
+    return <Navigate to="/admin" replace />;
+  }
 
   if (loading) {
     return <LoadingSpinner message="Cargando películas..." />;

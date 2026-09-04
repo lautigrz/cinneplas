@@ -3,6 +3,7 @@ import { Link } from "react-router";
 const IMAGE_URL = "https://image.tmdb.org/t/p/w500";
 
 function MovieCard({ movie }) {
+
     return (
         <Link to={`/movie/${movie.id}`} className="h-full flex flex-col group">
             <div className="bg-(--color-card) cursor-pointer rounded-xl shadow-md hover:scale-[103%] transition-transform duration-300 h-full flex flex-col overflow-hidden border border-gray-800/80 hover:border-red-600/50">

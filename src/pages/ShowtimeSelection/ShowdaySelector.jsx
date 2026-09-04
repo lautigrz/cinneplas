@@ -1,6 +1,6 @@
 import useDragScroll from "../../hooks/useDragScroll";
 
-function ShowdaySelector({ idMovie, selectedDay, setSelectedDay }) {
+function ShowdaySelector({ selectedDay, setSelectedDay }) {
     const {
         carouselRef,
         handleMouseDown,
@@ -37,11 +37,10 @@ function ShowdaySelector({ idMovie, selectedDay, setSelectedDay }) {
                     {days.map((day) => (
                         <button
                             key={day.id}
-                            className={`shrink-0 flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm transition-all cursor-pointer touch-manipulation ${
-                                selectedDay?.id === day.id
+                            className={`shrink-0 flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm transition-all cursor-pointer touch-manipulation ${selectedDay?.id === day.id
                                     ? "bg-red-600 text-white font-extrabold shadow-lg scale-105"
                                     : "bg-gray-800 text-gray-300 font-bold hover:bg-gray-700 hover:text-white"
-                            }`}
+                                }`}
                             onClick={() => setSelectedDay(day)}
                         >
                             {day.date ? (
